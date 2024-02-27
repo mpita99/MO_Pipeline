@@ -7,11 +7,11 @@ Una estandarización para la obtención de inputs para MaLiAmPi y la posterior e
 En el link https://zenodo.org/records/6876634/files/arf_20200420.tgz se encuentra un archivo .tgz 
 necesario para el funcionamiento de ARF. 
 
-    a). Para obtener el archivo. tgz:
+  a). Para obtener el archivo. tgz:
 ```bash
 wget https://zenodo.org/records/6876634/files/arf_20200420.tgz
 ```
-    b). Extraer los archivos del documento 
+  b). Extraer los archivos del documento 
 ```bash
 tar -xvzf arf_20200420.tgz 
 ```
