@@ -423,7 +423,7 @@ Para información respecto a su contenido se recomienda visitar el repositorio d
 
 # Uso de MaLiAmPi con datos reales
 Una de las razones de la creación de MaLiAmPi hacer comparables los datos de diferentes estudios de microbioma y para ello se emplean las secuencias **fastq** de dichos estudios. 
-En la esta sección se abordará la descarga de secuencias fastq de repositorios públicos así como la creación del manifiesto y la obtención de secuencias de referencias.
+En la esta sección se abordará la **descarga de secuencias fastq** de repositorios públicos así como la **creación del manifiesto** y la **obtención de secuencias de referencias**.
 
 ### 1. Obtención de secuencias de repositorios públicos
 Los estudios que generan datos de secuenciación públicos los suben al ***Sequence Read Archive (SRA)***, una base de datos pública que forma parte del NCBI. A su vez, nos proporcionan el kit de herramientas  **SRA Toolkit** para facilitar la descarga de las secuencias fastq.
@@ -446,7 +446,7 @@ sratoolkit.3.0.10-ubuntu64/
 └── schema
 ```
 Dentro del directorio ```bin``` se encontrarán los ejecutables que se emplearán.
-**NOTA IMPORTANTE:** Para descargar las secuencias fastq necesitarás una ***Accesion_List*** generada en [SRA Run Selector](https://www.ncbi.nlm.nih.gov/Traces/study/), una vez la tengas podrás pasar a lo siguiente.
+**NOTA IMPORTANTE:** Para descargar las secuencias fastq.gz necesitarás una ***Accesion_List*** generada en [SRA Run Selector](https://www.ncbi.nlm.nih.gov/Traces/study/), una vez la tengas podrás pasar a lo siguiente.
 
 #### b) Descarga de secuencias en formato SRA
 Las secuencias deben descargarse primero en formato SRA mediante el comando ```prefetch```. Se recomienda la generación de un archivo ejecutable como el siguiente:
@@ -467,8 +467,8 @@ SRRXXXXXXX/
 
 ```
 
-#### c) Obtención de secuencias en formato fastq
-Para transformar los archivos SRA en fastq se empleará el comando ```fasterq-dump```. 
+#### c) Obtención de secuencias en formato fastq.gz
+Para transformar los archivos SRA en fastq se empleará el comando ```fasterq-dump```. A su vez, se usará el comando ```gzip``` para comprimir las secuencias a fotmato ***fastq.gz*** debido a que así lo requiere MaLiAmPi. 
 ```
 #!/bin/bash
 
@@ -476,7 +476,18 @@ Para transformar los archivos SRA en fastq se empleará el comando ```fasterq-du
 while IFS= read -r id; do
     # Ejecutar fastq-dump para cada ID
     /home/usr/sratoolkit.3.0.10-ubuntu64/bin/fasterq-dump -3 --skip-technical $id
+        # Comprimir archivos fastq generados
+    gzip ${id}_1.fastq
+    gzip ${id}_2.fastq
+    # Si hay archivos huérfanos, también comprimirlos
+    if [ -e ${id}.fastq ]; then
+        gzip ${id}.fastq
+    fi
 done < /home/usr/reads/SRR_Acc_List.txt
+```
+**NOTA:** Los archivos ejecutables se emplean de la siguiente manera:
+```
+bash archivo_ejecutable.sh
 ```
 Esto generará 3 archivos fastq:
 ```
@@ -567,5 +578,5 @@ arf_20200420/
 
 La carpeta ***arf_20200420*** contiene las secuencias extraidas del NCBI mediante el pipeline ***ya16sdb***. ARF se encarga de filtrar las secuencias de dicha base de datos (o la base de datos que usemos como input) a distintos niveles, donde ***1200*** hace referencia a secuencias con más de 1200 pb de longitud, ***named*** contiene asignaciones a nivel de especie y, finalmente, ***filtered*** contiene solo secuencias que no son outliers.
 
-Los documentos ***seq_info.csv*** y ***seqs.fasta*** son inputs necesarios para MaLiAmPi. En este sentido **se sugiere utilizar aquellos que se encuentran en la carpeta filtered**.
+Los documentos ***seq_info.csv*** y ***seqs.fasta*** son inputs necesarios para MaLiAmPi. En este sentido **se sugiere utilizar aquellos que se encuentran en la carpeta** ```filtered```.
 
